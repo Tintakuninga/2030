@@ -609,7 +609,10 @@ const controlButtons = [
     'btnExport', 
     'btnImport', 
     'btnEditData', 
-    'btnClear'
+    'btnClear',
+	'tabNavigation',
+    'btnScrollTop',
+    'btnScrollBottom'
 ];
 
 function initCompactMode() {
@@ -657,22 +660,41 @@ if (btnToggleUI) {
 // --- SCROLL NAVIGATION ---
 const btnScrollTop = document.getElementById('btnScrollTop');
 const btnScrollBottom = document.getElementById('btnScrollBottom');
+const dataContainer = document.getElementById('dataListContainer'); // Mengambil elemen kotak data dalam
 
 if (btnScrollTop) {
     btnScrollTop.onclick = () => {
+        // 1. Gulir halaman utama (luar) ke atas
         window.scrollTo({ 
             top: 0, 
             behavior: 'smooth' 
         });
+        
+        // 2. Gulir kotak daftar data (dalam) ke atas
+        if (dataContainer) {
+            dataContainer.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
+            });
+        }
     };
 }
 
 if (btnScrollBottom) {
     btnScrollBottom.onclick = () => {
+        // 1. Gulir halaman utama (luar) ke bawah
         window.scrollTo({ 
             top: document.documentElement.scrollHeight, 
             behavior: 'smooth' 
         });
+        
+        // 2. Gulir kotak daftar data (dalam) ke bawah
+        if (dataContainer) {
+            dataContainer.scrollTo({ 
+                top: dataContainer.scrollHeight, 
+                behavior: 'smooth' 
+            });
+        }
     };
 }
 
