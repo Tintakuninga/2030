@@ -654,6 +654,28 @@ if (btnToggleUI) {
     };
 }
 
+// --- SCROLL NAVIGATION ---
+const btnScrollTop = document.getElementById('btnScrollTop');
+const btnScrollBottom = document.getElementById('btnScrollBottom');
+
+if (btnScrollTop) {
+    btnScrollTop.onclick = () => {
+        window.scrollTo({ 
+            top: 0, 
+            behavior: 'smooth' 
+        });
+    };
+}
+
+if (btnScrollBottom) {
+    btnScrollBottom.onclick = () => {
+        window.scrollTo({ 
+            top: document.documentElement.scrollHeight, 
+            behavior: 'smooth' 
+        });
+    };
+}
+
 initCompactMode();
 
 initTheme();
