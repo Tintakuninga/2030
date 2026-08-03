@@ -55,7 +55,7 @@ const notesInput = document.getElementById('notesInput');
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
-        saveIndicator.textContent = "MENGHUBUNGKAN KE RUANG DATA ANDA...";
+        saveIndicator.textContent = "MENGHUBUNG KE DATABASE...";
         
 		if (user.email) {
             const emailName = user.email.split('@')[0];
@@ -95,7 +95,7 @@ onAuthStateChanged(auth, async (user) => {
             updateTimestamp();
         } catch (error) {
             console.error("Gagal memuat data cloud:", error);
-            saveIndicator.textContent = "GAGAL MEMUAT DATA AKUN!";
+            saveIndicator.textContent = "GAGAL MEMUAT DATA!";
         }
     } else {
         currentUser = null;
@@ -131,10 +131,10 @@ async function saveState() {
         
         const now = new Date();
         const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        saveIndicator.textContent = `DATA ANDA TERSIMPAN (${getTodayString()} ${time})`;
+        saveIndicator.textContent = `TERSIMPAN (${getTodayString()} ${time})`;
     } catch (error) {
         console.error("Gagal menyimpan ke cloud:", error);
-        saveIndicator.textContent = "KONEKSI KELUARGA DATA GAGAL!";
+        saveIndicator.textContent = "KONEKSI GAGAL!";
     }
 }
 
@@ -147,7 +147,7 @@ function getTodayString() {
 }
 
 function updateTimestamp() {
-    saveIndicator.textContent = `TERHUBUNG DENGAN DATABASE`;
+    saveIndicator.textContent = `CONNECT DATABASE`;
 }
 
 // --- NAVIGATION BAR ---
