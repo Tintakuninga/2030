@@ -147,7 +147,7 @@ function getTodayString() {
 }
 
 function updateTimestamp() {
-    saveIndicator.textContent = `CONNECT DATABASE`;
+    saveIndicator.textContent = `CONNECT TO DATABASE`;
 }
 
 // --- NAVIGATION BAR ---
