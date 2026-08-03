@@ -449,8 +449,20 @@ document.getElementById('btnShuffle').onclick = () => {
 };
 
 document.getElementById('btnReset').onclick = () => {
-    if (confirm(`Reset urutan data ${categories[appState.currentTab]} kembali ke struktur awal?`)) {
-        appState.tabs[appState.currentTab] = JSON.parse(JSON.stringify(appState.original[appState.currentTab]));
+    if (confirm(`Reset urutan data ${categories[appState.currentTab]} ke awal dan bersihkan semua tanda?`)) {
+        
+        // Ambil data original, lalu secara paksa bersihkan SEMUA tanda (X, stabilo, salin)
+        const resetData = appState.original[appState.currentTab].map(item => ({
+            val: item.val,
+            marked: false,
+            highlighted: false,
+            lastCopied: ""
+        }));
+
+        // Terapkan data yang sudah bersih ke layar aktif dan perbarui blueprint-nya
+        appState.tabs[appState.currentTab] = JSON.parse(JSON.stringify(resetData));
+        appState.original[appState.currentTab] = JSON.parse(JSON.stringify(resetData));
+        
         saveState();
         renderList();
     }
