@@ -212,14 +212,17 @@ function renderList() {
     const totalX = list.filter(item => item.marked).length;
     const totalAktif = total - totalX;
 
-    totalCount.textContent = total;
-    activeCountEl.textContent = totalAktif;
-    xCountEl.textContent = totalX;
+    if (typeof totalCount !== 'undefined') totalCount.textContent = total;
+    if (typeof activeCountEl !== 'undefined') activeCountEl.textContent = totalAktif;
+    if (typeof xCountEl !== 'undefined') xCountEl.textContent = totalX;
     
-    if (total === 0) return;
+    if (total === 0) {
+        dataListContainer.innerHTML = '';
+        return;
+    }
 
     const itemsWithOriginalIndex = list.map((item, originalIdx) => ({ item, originalIdx }));
-    const query = searchQuery.toLowerCase().trim();
+    const query = typeof searchQuery !== 'undefined' ? searchQuery.toLowerCase().trim() : '';
     const filteredItems = itemsWithOriginalIndex.filter(obj => obj.item.val.toLowerCase().includes(query));
 
     if (filteredItems.length === 0 && query !== '') {
@@ -234,7 +237,8 @@ function renderList() {
         const isSalinDisabled = item.marked || isCopiedToday; 
         const isPakaiDisabled = item.marked;                  
 
-        let rowClass = "group flex items-center justify-between p-4 transition-all ";
+        // PADDING DIPERKECIL DI HP: p-2 untuk HP, p-4 untuk PC
+        let rowClass = "group flex items-center justify-between p-2 sm:p-4 transition-all ";
         if (item.marked) {
             rowClass += "marked-item";
         } else {
@@ -248,36 +252,50 @@ function renderList() {
             }
         }
 
+        // LOGIKA NIK DISENSOR (Hanya di HP)
+        const rawVal = item.val || "";
+        let maskedVal = rawVal;
+        if (rawVal.length > 5) {
+            maskedVal = rawVal.substring(0, 3) + 'xx' + rawVal.substring(rawVal.length - 2);
+        }
+
         return `
         <div class="${rowClass.trim()}">
-            <div class="flex items-center gap-4">
-                <span class="text-[10px] font-mono text-slate-400 dark:text-slate-500 w-6">${idx + 1}</span>
-                <div class="font-mono text-base tracking-widest ${item.marked ? 'marked-text' : (isCopiedToday ? 'text-emerald-600 dark:text-emerald-400 line-through opacity-60' : 'text-slate-700 dark:text-slate-200')} select-all">
-                    ${item.val}
+            <div class="flex items-center gap-2 sm:gap-4 flex-1 overflow-hidden">
+                <span class="text-[10px] sm:text-xs font-mono text-slate-400 dark:text-slate-500 w-4 sm:w-6">${idx + 1}</span>
+                
+                <div class="font-mono text-sm sm:text-base tracking-widest ${item.marked ? 'marked-text' : (isCopiedToday ? 'text-emerald-600 dark:text-emerald-400 line-through opacity-60' : 'text-slate-700 dark:text-slate-200')} select-all truncate">
+                    <!-- Teks NIK utuh di Desktop, Disensor di HP -->
+                    <span class="hidden sm:inline">${rawVal}</span>
+                    <span class="inline sm:hidden">${maskedVal}</span>
                 </div>
-                ${isCopiedToday ? '<span class="text-[9px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-check-double mr-1"></i>Selesai Hari Ini</span>' : ''}
+                
+                ${isCopiedToday ? `<span class="text-[9px] px-1.5 sm:px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-400 font-bold uppercase tracking-wider flex items-center shrink-0"><i class="fa-solid fa-check-double sm:mr-1"></i><span class="hidden sm:inline">Selesai</span></span>` : ''}
             </div>
-            <div class="flex gap-2">
-                <button onclick="toggleHighlight(${idx})" class="w-10 h-10 flex items-center justify-center rounded-lg border ${item.highlighted ? 'bg-amber-500 border-amber-500 text-white shadow-md shadow-amber-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-400 hover:border-amber-500 hover:text-amber-500'} transition cursor-pointer" title="Beri Penanda Warna">
-                    <i class="fa-solid fa-highlighter text-sm"></i>
+            
+            <div class="flex gap-1 sm:gap-2 ml-2">
+                <button onclick="toggleHighlight(${idx})" class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg border ${item.highlighted ? 'bg-amber-500 border-amber-500 text-white shadow-md shadow-amber-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-400 hover:border-amber-500 hover:text-amber-500'} transition cursor-pointer shrink-0" title="Beri Penanda Warna">
+                    <i class="fa-solid fa-highlighter text-xs sm:text-sm"></i>
                 </button>
 
-                <button onclick="toggleMark(${idx})" class="w-10 h-10 flex items-center justify-center rounded-lg border ${item.marked ? 'bg-rose-600 border-rose-600 text-white shadow-md shadow-rose-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-400 hover:border-rose-500 hover:text-rose-500'} transition cursor-pointer" title="Beri Tanda X">
-                    <i class="fa-solid fa-xmark text-sm"></i>
+                <button onclick="toggleMark(${idx})" class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg border ${item.marked ? 'bg-rose-600 border-rose-600 text-white shadow-md shadow-rose-500/20' : 'border-slate-300 dark:border-slate-600 text-slate-400 hover:border-rose-500 hover:text-rose-500'} transition cursor-pointer shrink-0" title="Beri Tanda X">
+                    <i class="fa-solid fa-xmark text-xs sm:text-sm"></i>
                 </button>
                 
                 <button onclick="copyData('${item.val}', ${idx})" 
-                        class="px-4 py-2 text-xs font-bold rounded-lg border transition cursor-pointer 
+                        class="px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-lg border transition cursor-pointer flex items-center justify-center shrink-0
                         ${isSalinDisabled ? 'bg-slate-100 dark:bg-slate-700 border-transparent text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:text-slate-200'}"
-                        ${isSalinDisabled ? 'disabled' : ''}>
-                    SALIN
+                        ${isSalinDisabled ? 'disabled' : ''} title="Salin Data">
+                    <i class="fa-solid fa-copy sm:mr-1.5 text-xs sm:text-sm"></i>
+                    <span class="hidden sm:inline">SALIN</span>
                 </button>
 
                 <button onclick="markUsed(${idx})" 
-                        class="px-4 py-2 text-xs font-bold rounded-lg shadow-sm transition cursor-pointer
+                        class="px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs font-bold rounded-lg shadow-sm transition cursor-pointer flex items-center justify-center shrink-0
                         ${isPakaiDisabled ? 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-none' : 'bg-emerald-500 hover:bg-emerald-600 text-white'}"
-                        ${isPakaiDisabled ? 'disabled' : ''}>
-                    PAKAI
+                        ${isPakaiDisabled ? 'disabled' : ''} title="Pakai Data">
+                    <i class="fa-solid fa-check sm:mr-1.5 text-xs sm:text-sm"></i>
+                    <span class="hidden sm:inline">PAKAI</span>
                 </button>
             </div>
         </div>

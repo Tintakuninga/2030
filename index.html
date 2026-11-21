@@ -53,7 +53,7 @@
     <div id="mainAppContainer" class="hidden max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 transition-opacity duration-500">
         
         <header class="flex justify-between items-center mb-6">
-			<div>
+			<div class="hidden sm:block">
 				<h1 class="text-3xl font-black tracking-tighter text-indigo-600 dark:text-indigo-400">ZUI 2.5</h1>
 				<p id="saveIndicator" class="text-[11px] sm:text-xs font-mono text-slate-500 mt-1 uppercase tracking-widest">
 					MENUNGGU DATA...
@@ -117,76 +117,108 @@
         </div>
 
         <div id="mainDashboard" class="hidden">
-            <div class="flex flex-wrap gap-4 justify-between items-center mb-4">
-                <div class="flex flex-wrap gap-2">
-                    <button id="btnShuffle" class="p-3 bg-amber-100 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 rounded-xl border border-amber-200 dark:border-amber-900 transition hover:scale-105 cursor-pointer" title="Acak Baris">
-                        <i class="fa-solid fa-shuffle"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">ACAK</span>
-                    </button>
-                    <button id="btnReset" class="p-3 bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-200 dark:border-blue-900 transition hover:scale-105 cursor-pointer" title="Reset Urutan">
-                        <i class="fa-solid fa-rotate-left"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">RESET</span>
-                    </button>
-                    <button id="btnToggleNotes" class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700 transition hover:scale-105 cursor-pointer hover:text-indigo-500 dark:hover:text-indigo-400" title="Buka Catatan Digit">
-                        <i class="fa-regular fa-clipboard"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">CATATAN</span>
-                    </button>
-                    <button id="btnToggleSearch" class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700 transition hover:scale-105 cursor-pointer hover:text-indigo-500 dark:hover:text-indigo-400" title="Cari Data">
-                        <i class="fa-solid fa-magnifying-glass"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">PENCARIAN</span>
-                    </button>
-                </div>
+        <!-- PANEL KONTROL ATAS -->
+        <div class="flex flex-wrap gap-4 justify-between items-center mb-4">
+            <!-- Tombol Aksi Kiri (Acak, Reset, Catatan, Cari) -->
+            <div class="flex flex-wrap gap-2">
+                <button id="btnShuffle" class="p-3 bg-amber-100 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 rounded-xl border border-amber-200 dark:border-amber-900 transition hover:scale-105 cursor-pointer" title="Acak Baris">
+                    <i class="fa-solid fa-shuffle"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">ACAK</span>
+                </button>
+                <button id="btnReset" class="p-3 bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-200 dark:border-blue-900 transition hover:scale-105 cursor-pointer" title="Reset Urutan">
+                    <i class="fa-solid fa-rotate-left"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">RESET</span>
+                </button>
+                <button id="btnToggleNotes" class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700 transition hover:scale-105 cursor-pointer hover:text-indigo-500 dark:hover:text-indigo-400" title="Buka Catatan Digit">
+                    <i class="fa-regular fa-clipboard"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">CATATAN</span>
+                </button>
+                <button id="btnToggleSearch" class="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700 transition hover:scale-105 cursor-pointer hover:text-indigo-500 dark:hover:text-indigo-400" title="Cari Data">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span class="text-xs font-bold ml-1 hidden sm:inline">CARI</span>
+                </button>
+            </div>
+            
+            <!-- Tombol Aksi Kanan (Export, Import, Edit, Hapus) -->
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <button id="btnExport" class="flex-1 sm:flex-none p-3 sm:px-4 sm:py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer text-xs flex justify-center items-center" title="Export File">
+                    <i class="fa-solid fa-download sm:mr-1.5 text-emerald-500"></i> <span class="hidden sm:inline">EXPORT</span>
+                </button>
+                <button id="btnImport" class="flex-1 sm:flex-none p-3 sm:px-4 sm:py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer text-xs flex justify-center items-center" title="Import File">
+                    <i class="fa-solid fa-upload sm:mr-1.5 text-indigo-500"></i> <span class="hidden sm:inline">IMPORT</span>
+                </button>
+                <input type="file" id="fileImport" class="hidden" accept=".json">
                 
-                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                    <button id="btnExport" class="flex-1 sm:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer text-xs">
-                        <i class="fa-solid fa-download mr-1.5 text-emerald-500"></i> EXPORT
-                    </button>
-                    <button id="btnImport" class="flex-1 sm:flex-none px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer text-xs">
-                        <i class="fa-solid fa-upload mr-1.5 text-indigo-500"></i> IMPORT
-                    </button>
-                    <input type="file" id="fileImport" class="hidden" accept=".json">
-					
-					<button id="btnEditData" class="w-full sm:w-auto px-5 py-3 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 font-bold rounded-xl border border-amber-100 dark:border-amber-900 transition hover:bg-amber-600 hover:text-white cursor-pointer text-xs flex items-center justify-center">
-						<i class="fa-solid fa-pen-to-square mr-1.5"></i> EDIT DATA
-					</button>
-                    <button id="btnClear" class="w-full sm:w-auto px-5 py-3 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 font-bold rounded-xl border border-rose-100 dark:border-rose-900 transition hover:bg-rose-600 hover:text-white cursor-pointer text-xs">
-                        <i class="fa-solid fa-trash-can mr-1.5"></i> HAPUS DATA
-                    </button>
-                </div>
-            </div>
-
-            <div id="notesContainer" class="hidden mb-4 transition-all duration-200">
-                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
-                    <div class="flex justify-between items-center mb-1.5">
-                        <label for="notesInput" class="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                            <i class="fa-solid fa-pen-to-square text-indigo-500"></i> MEMO / DIGIT TERAKHIR YANG DISALIN
-                        </label>
-                        <span class="text-[10px] text-slate-400 italic">Otomatis Tersimpan</span>
-                    </div>
-                    <textarea id="notesInput" rows="2" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-4 focus:ring-indigo-500/20 focus:outline-none font-mono text-sm text-slate-900 dark:text-white" placeholder="Ketik digit atau catatan penting Anda di sini agar tidak lupa..."></textarea>
-                </div>
-            </div>
-
-            <div id="searchContainer" class="hidden mb-4 transition-all duration-200">
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" id="searchInput" class="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-4 focus:ring-indigo-500/20 focus:outline-none text-sm dark:text-white text-slate-900 font-mono tracking-wider" placeholder="Ketik kata kunci untuk mencari data...">
-                    <button id="btnClearSearch" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-rose-500 transition hidden">
-                        <i class="fa-solid fa-circle-xmark"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap justify-between items-center gap-4">
-                    <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs font-black uppercase tracking-widest">
-                        <div class="text-slate-400">TOTAL: <span id="totalCount" class="text-indigo-600 dark:text-indigo-400 ml-1">0</span></div>
-                        <div class="text-slate-400 border-l border-slate-300 dark:border-slate-600 pl-4">AKTIF: <span id="activeCount" class="text-emerald-600 dark:text-emerald-400 ml-1">0</span></div>
-                        <div class="text-slate-400 border-l border-slate-300 dark:border-slate-600 pl-4">TANDA X: <span id="xCount" class="text-rose-600 dark:text-rose-400 ml-1">0</span></div>
-                    </div>
-                    <span class="text-[11px] text-slate-400 italic">Data X otomatis bergeser paling bawah</span>
-                </div>
-                <div id="dataListContainer" class="divide-y divide-slate-100 dark:divide-slate-700 max-h-[600px] overflow-y-auto"></div>
+                <button id="btnEditData" class="flex-1 sm:flex-none p-3 sm:px-5 sm:py-3 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 font-bold rounded-xl border border-amber-100 dark:border-amber-900 transition hover:bg-amber-600 hover:text-white cursor-pointer text-xs flex items-center justify-center" title="Edit Data">
+                    <i class="fa-solid fa-pen-to-square sm:mr-1.5"></i> <span class="hidden sm:inline">EDIT DATA</span>
+                </button>
+                <button id="btnClear" class="flex-1 sm:flex-none p-3 sm:px-5 sm:py-3 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 font-bold rounded-xl border border-rose-100 dark:border-rose-900 transition hover:bg-rose-600 hover:text-white cursor-pointer text-xs flex items-center justify-center" title="Hapus Semua Data">
+                    <i class="fa-solid fa-trash-can sm:mr-1.5"></i> <span class="hidden sm:inline">HAPUS DATA</span>
+                </button>
             </div>
         </div>
+
+        <!-- PANEL CATATAN -->
+        <div id="notesContainer" class="hidden mb-4 transition-all duration-200">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
+                <div class="flex justify-between items-center mb-1.5">
+                    <label for="notesInput" class="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square text-indigo-500"></i> MEMO / DIGIT TERAKHIR
+                    </label>
+                    <span class="text-[10px] text-slate-400 italic">Otomatis Tersimpan</span>
+                </div>
+                <textarea id="notesInput" rows="2" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 focus:ring-4 focus:ring-indigo-500/20 focus:outline-none font-mono text-sm text-slate-900 dark:text-white" placeholder="Ketik digit atau catatan penting Anda di sini agar tidak lupa..."></textarea>
+            </div>
+        </div>
+
+        <!-- PANEL PENCARIAN -->
+        <div id="searchContainer" class="hidden mb-4 transition-all duration-200">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+                <input type="text" id="searchInput" class="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-4 focus:ring-indigo-500/20 focus:outline-none text-sm dark:text-white text-slate-900 font-mono tracking-wider" placeholder="Ketik kata kunci untuk mencari data...">
+                <button id="btnClearSearch" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-rose-500 transition hidden">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- TABEL DATA & STATISTIK -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            
+            <!-- HEADER STATISTIK (Dibuat lebih ringkas pakai Ikon di HP) -->
+            <div class="p-3 sm:px-6 sm:py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap justify-between items-center gap-2 sm:gap-4">
+                
+                <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-black uppercase tracking-widest w-full sm:w-auto justify-between sm:justify-start">
+                    
+                    <div class="flex items-center gap-1.5 text-slate-400" title="Total">
+                        <i class="fa-solid fa-database text-indigo-500 sm:hidden"></i>
+                        <span class="hidden sm:inline">TOTAL:</span> 
+                        <span id="totalCount" class="text-indigo-600 dark:text-indigo-400">0</span>
+                    </div>
+                    
+                    <div class="w-px h-3 bg-slate-300 dark:bg-slate-600 hidden sm:block"></div>
+                    
+                    <div class="flex items-center gap-1.5 text-slate-400" title="Aktif">
+                        <i class="fa-solid fa-circle-check text-emerald-500 sm:hidden"></i>
+                        <span class="hidden sm:inline">AKTIF:</span> 
+                        <span id="activeCount" class="text-emerald-600 dark:text-emerald-400">0</span>
+                    </div>
+                    
+                    <div class="w-px h-3 bg-slate-300 dark:bg-slate-600 hidden sm:block"></div>
+                    
+                    <div class="flex items-center gap-1.5 text-slate-400" title="Tanda X">
+                        <i class="fa-solid fa-circle-xmark text-rose-500 sm:hidden"></i>
+                        <span class="hidden sm:inline">TANDA X:</span> 
+                        <span id="xCount" class="text-rose-600 dark:text-rose-400">0</span>
+                    </div>
+                </div>
+                
+                <!-- Tulisan yang disembunyikan di HP -->
+                <span class="hidden sm:block text-[11px] text-slate-400 italic">Data X otomatis bergeser paling bawah</span>
+            </div>
+            
+            <!-- AREA ISI DATA -->
+            <div id="dataListContainer" class="divide-y divide-slate-100 dark:divide-slate-700 max-h-[600px] overflow-y-auto"></div>
+        </div>
+    </div>
 
         <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-indigo-600 text-white px-8 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 text-sm font-bold tracking-tight">
             TELAH DISALIN!
