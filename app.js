@@ -481,13 +481,21 @@ document.getElementById('btnReset').onclick = () => {
 };
 
 document.getElementById('btnClear').onclick = () => {
-    const currentName = categories[appState.currentTab];
-    if (confirm(`Hapus seluruh data kategori [${currentName}]? Tab lainnya TIDAK akan terhapus.`)) {
-        appState.tabs[appState.currentTab] = [];
-        appState.original[appState.currentTab] = [];
-        saveState();
-        closeAndClearSearch();
-        checkDisplayMode();
+    const inputCode = prompt("Masukkan kode keamanan untuk menghapus data:");
+
+    if (inputCode === "221HGE") {
+        
+        const currentName = categories[appState.currentTab];
+        if (confirm(`Hapus seluruh data kategori [${currentName}]? Tab lainnya TIDAK akan terhapus.`)) {
+            appState.tabs[appState.currentTab] = [];
+            appState.original[appState.currentTab] = [];
+            saveState();
+            closeAndClearSearch();
+            checkDisplayMode();
+        }
+        
+    } else if (inputCode !== null) {
+        alert("Kode salah! Data gagal dihapus.");
     }
 };
 
