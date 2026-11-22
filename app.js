@@ -48,15 +48,18 @@ const htmlEl = document.documentElement;
 const notesInput = document.getElementById('notesInput');
 
 onAuthStateChanged(auth, async (user) => {  
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+
+    const scrollContainer = document.getElementById('scrollContainer');
 
     if (user) {
         currentUser = user;
         saveIndicator.textContent = "MENGHUBUNG KE DATABASE...";
         
-        if (scrollTopBtn) scrollTopBtn.classList.remove('hidden');
-        if (scrollBottomBtn) scrollBottomBtn.classList.remove('hidden');     
+        if (scrollContainer) {
+            scrollContainer.classList.remove('hidden');
+            scrollContainer.classList.add('flex');
+        }
+
 		if (user.email) {
             const emailName = user.email.split('@')[0];
             const userNameDisplay = document.getElementById('userNameDisplay');
@@ -107,8 +110,10 @@ onAuthStateChanged(auth, async (user) => {
         };
         notesInput.value = "";
 
-        if (scrollTopBtn) scrollTopBtn.classList.add('hidden');
-        if (scrollBottomBtn) scrollBottomBtn.classList.add('hidden');
+        if (scrollContainer) {
+            scrollContainer.classList.remove('flex');
+            scrollContainer.classList.add('hidden');
+        }
 
         const userNameDisplay = document.getElementById('userNameDisplay');
         if (userNameDisplay) {
