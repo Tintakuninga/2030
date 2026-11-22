@@ -3,7 +3,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Konfigurasi Firebase Anda yang tersimpan permanen
 const firebaseConfig = {
     apiKey: "AIzaSyDu9mi0SySgJgyEueuD6WEhpc0nOyLYic4",
     authDomain: "pkl-hasmawati.firebaseapp.com",
@@ -18,7 +17,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Object State Utama Aplikasi (Akan direset setiap ganti akun)
 let appState = {
     currentTab: 'rumah_tangga',
     tabs: { rumah_tangga: [], usaha_micro: [], verifikasi: [], opsi_lain: [], verif: [] },
@@ -49,14 +47,16 @@ const toast = document.getElementById('toast');
 const htmlEl = document.documentElement;
 const notesInput = document.getElementById('notesInput');
 
-// --- SYNC ENGINE (FIREBASE CLOUD - DYNAMIC PER USER) ---
+onAuthStateChanged(auth, async (user) => {  
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const scrollBottomBtn = document.getElementById('scrollBottomBtn');
 
-// Memantau status login. Jika sukses login, ambil data BERDASARKAN USER UID
-onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
         saveIndicator.textContent = "MENGHUBUNG KE DATABASE...";
         
+        if (scrollTopBtn) scrollTopBtn.classList.remove('hidden');
+        if (scrollBottomBtn) scrollBottomBtn.classList.remove('hidden');     
 		if (user.email) {
             const emailName = user.email.split('@')[0];
             const userNameDisplay = document.getElementById('userNameDisplay');
@@ -107,6 +107,9 @@ onAuthStateChanged(auth, async (user) => {
         };
         notesInput.value = "";
 
+        if (scrollTopBtn) scrollTopBtn.classList.add('hidden');
+        if (scrollBottomBtn) scrollBottomBtn.classList.add('hidden');
+
         const userNameDisplay = document.getElementById('userNameDisplay');
         if (userNameDisplay) {
             userNameDisplay.textContent = "USER";
@@ -119,13 +122,11 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Fungsi Simpan Otomatis ke Cloud Firebase (Spesifik per User ID)
 async function saveState() {
     if (!currentUser) return; 
     
     saveIndicator.textContent = "MENYIMPAN KE CLOUD...";
     try {
-        // PERUBAHAN DI SINI: Menyimpan data ke kamar dokumen milik sendiri (currentUser.uid)
         const docRef = doc(db, "data_pro_manager", currentUser.uid);
         await setDoc(docRef, appState); 
         
@@ -150,7 +151,6 @@ function updateTimestamp() {
     saveIndicator.textContent = `CONNECT TO DATABASE`;
 }
 
-// --- NAVIGATION BAR ---
 window.switchTab = function(tabKey) {
     appState.currentTab = tabKey;
 	localStorage.setItem('activeTab', tabKey);
@@ -185,7 +185,6 @@ function checkDisplayMode() {
     }
 }
 
-// --- INPUT PROCESSING ---
 document.getElementById('btnLoadData').onclick = () => {
     const text = rawInput.value.trim();
     if (!text) return;
@@ -203,7 +202,6 @@ document.getElementById('btnLoadData').onclick = () => {
     checkDisplayMode();
 };
 
-// --- RENDERING CORE ---
 function renderList() {
     const list = appState.tabs[appState.currentTab] || [];
     const todayStr = getTodayString();
@@ -237,7 +235,6 @@ function renderList() {
         const isSalinDisabled = item.marked || isCopiedToday; 
         const isPakaiDisabled = item.marked;                  
 
-        // PADDING DIPERKECIL DI HP: p-2 untuk HP, p-4 untuk PC
         let rowClass = "group flex items-center justify-between p-2 sm:p-4 transition-all ";
         if (item.marked) {
             rowClass += "marked-item";
@@ -252,7 +249,6 @@ function renderList() {
             }
         }
 
-        // LOGIKA NIK DISENSOR (Hanya di HP)
         const rawVal = item.val || "";
         let maskedVal = rawVal;
         if (rawVal.length > 5) {
@@ -302,7 +298,6 @@ function renderList() {
     `}).join('');
 }
 
-// --- LINE MANIPULATION ---
 window.toggleHighlight = function(idx) {
     const list = appState.tabs[appState.currentTab];
     list[idx].highlighted = !list[idx].highlighted;
@@ -351,7 +346,6 @@ window.markUsed = function(idx) {
     renderList();
 }
 
-// --- LOGIKA TOGGLE & REALTIME CATATAN ---
 document.getElementById('btnToggleNotes').onclick = () => {
     const container = document.getElementById('notesContainer');
     const isHidden = container.classList.toggle('hidden');
@@ -363,7 +357,6 @@ notesInput.oninput = (e) => {
     saveState(); 
 };
 
-// --- LOGIKA TOGGLE INPUT PENCARIAN ---
 document.getElementById('btnToggleSearch').onclick = () => {
     const container = document.getElementById('searchContainer');
     const isHidden = container.classList.toggle('hidden');
@@ -399,7 +392,6 @@ function closeAndClearSearch() {
     renderList();
 }
 
-// --- ARCHIVE ENGINE ---
 document.getElementById('btnExport').onclick = () => {
     const dataStr = JSON.stringify(appState);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -448,7 +440,6 @@ document.getElementById('fileImport').onchange = (e) => {
     e.target.value = '';
 };
 
-// --- CONTROLS ---
 document.getElementById('btnShuffle').onclick = () => {
     const list = appState.tabs[appState.currentTab];
     const activeItems = list.filter(i => !i.marked);
@@ -469,7 +460,6 @@ document.getElementById('btnShuffle').onclick = () => {
 document.getElementById('btnReset').onclick = () => {
     if (confirm(`Reset urutan data ${categories[appState.currentTab]} ke awal dan bersihkan semua tanda?`)) {
         
-        // Ambil data original, lalu secara paksa bersihkan SEMUA tanda (X, stabilo, salin)
         const resetData = appState.original[appState.currentTab].map(item => ({
             val: item.val,
             marked: false,
@@ -477,7 +467,6 @@ document.getElementById('btnReset').onclick = () => {
             lastCopied: ""
         }));
 
-        // Terapkan data yang sudah bersih ke layar aktif dan perbarui blueprint-nya
         appState.tabs[appState.currentTab] = JSON.parse(JSON.stringify(resetData));
         appState.original[appState.currentTab] = JSON.parse(JSON.stringify(resetData));
         
@@ -497,7 +486,6 @@ document.getElementById('btnClear').onclick = () => {
     }
 };
 
-// --- GRAPHICS & CONTRAST ---
 function initTheme() {
     const currentTheme = localStorage.getItem('theme') || 'dark';
     if (currentTheme === 'dark') { htmlEl.classList.add('dark'); } 
@@ -517,26 +505,22 @@ document.getElementById('themeToggle').onclick = () => {
     updateThemeIcon();
 };
 
-// --- MODE EDIT DATA (TIDAK MENGUBAH URUTAN ANTRIAN) ---
 const editModal = document.getElementById('editModal');
 const newEditInput = document.getElementById('newEditInput');
 const editDataList = document.getElementById('editDataList');
 
-// Buka Modal
 document.getElementById('btnEditData').onclick = () => {
     renderEditList();
     editModal.classList.remove('hidden');
     editModal.classList.add('flex'); // Pakai flex agar letaknya di tengah
 };
 
-// Tutup Modal
 document.getElementById('btnCloseModal').onclick = () => {
     editModal.classList.add('hidden');
     editModal.classList.remove('flex');
     newEditInput.value = '';
 };
 
-// Merender daftar data yang bisa dihapus secara spesifik
 function renderEditList() {
     const list = appState.tabs[appState.currentTab] || [];
     if (list.length === 0) {
@@ -559,22 +543,19 @@ function renderEditList() {
     `).join('');
 }
 
-// Menghapus 1 baris tanpa merusak urutan
 window.deleteSingleData = function(idx) {
     if (confirm('Yakin ingin menghapus baris ini secara permanen dari database?')) {
         const list = appState.tabs[appState.currentTab];
         list.splice(idx, 1);
         
-        // Perbarui referensi original agar saat klik 'Reset', data ini tidak kembali muncul
         appState.original[appState.currentTab] = JSON.parse(JSON.stringify(list));
         
-        saveState(); // Sinkron ke Firebase
-        renderList(); // Refresh layar utama
-        renderEditList(); // Refresh layar modal
+        saveState();
+        renderList();
+        renderEditList();
     }
 };
 
-// Menambah data ke antrean paling akhir (sebelum tanda X)
 document.getElementById('btnAddEditData').onclick = () => {
     const text = newEditInput.value.trim();
     if (!text) return;
@@ -585,27 +566,21 @@ document.getElementById('btnAddEditData').onclick = () => {
                     .map(val => ({ val, marked: false, highlighted: false, lastCopied: "" }));
 
     const list = appState.tabs[appState.currentTab];
-    
-    // Cari index baris pertama yang memiliki tanda X
     const firstXIdx = list.findIndex(i => i.marked);
     
     if (firstXIdx === -1) {
-        // Jika tidak ada data bertanda X sama sekali, push ke paling bawah
         list.push(...lines);
     } else {
-        // Jika ada, sisipkan tepat DI ATAS baris bertanda X pertama
         list.splice(firstXIdx, 0, ...lines);
     }
 
-    // Perbarui ke daftar original
     appState.original[appState.currentTab] = JSON.parse(JSON.stringify(list));
     
     newEditInput.value = '';
-    saveState(); // Lempar ke Firebase
-    renderList(); // Refresh dashboard utama
-    renderEditList(); // Refresh Modal
+    saveState();
+    renderList();
+    renderEditList();
 
-    // Notifikasi ringan
     const toast = document.getElementById('toast');
     toast.textContent = `+${lines.length} DATA DITAMBAHKAN!`;
     toast.classList.remove('opacity-0');
@@ -615,10 +590,7 @@ document.getElementById('btnAddEditData').onclick = () => {
     }, 1500);
 };
 
-// --- COMPACT MODE (SEMBUNYIKAN TOMBOL KONTROL UNTUK MOBILE) ---
 const btnToggleUI = document.getElementById('btnToggleUI');
-
-// Daftar ID tombol-tombol yang ingin disembunyikan saat mode compact aktif
 const controlButtons = [
     'btnShuffle', 
     'btnReset', 
@@ -634,7 +606,6 @@ const controlButtons = [
 ];
 
 function initCompactMode() {
-    // Cek memori browser, apakah sebelumnya diset true (disembunyikan)
     const isCompact = localStorage.getItem('compactMode') === 'true';
     applyCompactMode(isCompact);
 }
@@ -651,7 +622,6 @@ function applyCompactMode(isCompact) {
         }
     });
     
-    // Ubah ikon mata
     if (btnToggleUI) {
         if (isCompact) {
             btnToggleUI.innerHTML = '<i class="fa-solid fa-eye-slash text-sm"></i>';
@@ -668,27 +638,24 @@ function applyCompactMode(isCompact) {
 if (btnToggleUI) {
     btnToggleUI.onclick = () => {
         const currentlyCompact = localStorage.getItem('compactMode') === 'true';
-        const newMode = !currentlyCompact; // Balikkan statusnya
+        const newMode = !currentlyCompact;
         
-        localStorage.setItem('compactMode', newMode); // Simpan ke memori HP/Tablet
-        applyCompactMode(newMode); // Terapkan perubahan visualnya
+        localStorage.setItem('compactMode', newMode);
+        applyCompactMode(newMode);
     };
 }
 
-// --- SCROLL NAVIGATION ---
 const btnScrollTop = document.getElementById('btnScrollTop');
 const btnScrollBottom = document.getElementById('btnScrollBottom');
-const dataContainer = document.getElementById('dataListContainer'); // Mengambil elemen kotak data dalam
+const dataContainer = document.getElementById('dataListContainer');
 
 if (btnScrollTop) {
     btnScrollTop.onclick = () => {
-        // 1. Gulir halaman utama (luar) ke atas
         window.scrollTo({ 
             top: 0, 
             behavior: 'smooth' 
         });
         
-        // 2. Gulir kotak daftar data (dalam) ke atas
         if (dataContainer) {
             dataContainer.scrollTo({ 
                 top: 0, 
@@ -700,13 +667,11 @@ if (btnScrollTop) {
 
 if (btnScrollBottom) {
     btnScrollBottom.onclick = () => {
-        // 1. Gulir halaman utama (luar) ke bawah
         window.scrollTo({ 
             top: document.documentElement.scrollHeight, 
             behavior: 'smooth' 
         });
         
-        // 2. Gulir kotak daftar data (dalam) ke bawah
         if (dataContainer) {
             dataContainer.scrollTo({ 
                 top: dataContainer.scrollHeight, 
