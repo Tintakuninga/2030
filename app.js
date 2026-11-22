@@ -480,9 +480,10 @@ document.getElementById('btnReset').onclick = () => {
     }
 };
 
+
 document.getElementById('btnClear').onclick = () => {
     const inputCode = prompt("Masukkan kode keamanan untuk menghapus data:");
-
+    //Code Penghapusan
     if (inputCode === "221HGE") {
         
         const currentName = categories[appState.currentTab];
